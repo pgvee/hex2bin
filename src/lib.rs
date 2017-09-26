@@ -4,24 +4,26 @@ pub fn hex_to_base64<T: ?Sized + AsRef<[u8]>>(input: &T) -> String {
 
     let mut output = String::new();
 
-    let byte_chunks = input.as_ref().chunks(3);
+    let mut bytes = input.as_ref().to_owned();
+    let byte_chunks = bytes.chunks_mut(3);
 
-    let mut empty_chunk_buffer = vec!(0u8,0u8,0u8);
+    let mut empty_chunk_buffer = vec![0, 0, 0];
 
     for chunk in byte_chunks {
-        let mut chunk_buffer = chunk.clone();
-        if chunk.len() > 3 {
-            chunk_buffer = chunk.iter().collect::<_>();
-            for (i, each) in (*chunk).iter().enumerate() {
-                chunk_buffer[i] = each.clone();
+        let chunk_buffer = if chunk.len() < 3 {
+            for (i, each) in chunk.iter().enumerate() {
+                empty_chunk_buffer[i] = *each;
             }
-        }
+            &empty_chunk_buffer[..]
+        } else {
+            &chunk[..]
+        };
 
         let temp = ((chunk_buffer[0] as u32) << 16)
                  + ((chunk_buffer[1] as u32) << 8)
                  +  (chunk_buffer[2] as u32);
         let idx1 = ((temp >> 18) & LOWER_SIX_BITS) as usize;
-        output.push((base64_alphabet[idx1].clone() as char));
+        output.push(base64_alphabet[idx1] as char);
     }
     output
 }
@@ -33,8 +35,7 @@ mod tests {
 
     #[test]
     fn encode_test_1(){
-        hex_to_base64("test");
-        // assert!("SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t", );
+        assert_eq!(hex_to_base64("test"), "dGVzdAo=");
     }
 }
 
