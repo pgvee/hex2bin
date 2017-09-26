@@ -1,0 +1,15 @@
+[package]
+name = "hex2b64"
+version = "0.1.0"
+authors = ["Peter Voorhees <peter@voorhe.es>"]
+
+[dependencies]
+
+
+[lib]
+name = "crypto_tools_lib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mybin"
+path = "src/bin.rs"
