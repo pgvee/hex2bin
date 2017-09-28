@@ -1,7 +1,7 @@
 extern crate crypto_tools_lib;
 
 fn main() {
-    use crypto_tools_lib::hex_to_base64;
+    use crypto_tools_lib::bytes_to_base64;
 
-    println!("{}", hex_to_base64("Test"));
+    println!("{}", bytes_to_base64("Test"));
 }
