@@ -11,5 +11,5 @@ name = "crypto_tools_lib"
 path = "src/lib.rs"
 
 [[bin]]
-name = "mybin"
+name = "cryptopals"
 path = "src/bin.rs"
