@@ -1,3 +1,11 @@
+/// Only use this when the input string is guaranteed to be a string of hex. Otherwise,
+/// will panic.
+pub fn hexstr_to_bytes(input: &str) -> Vec<u8> {
+        input.as_bytes().chunks(2)
+        .map(|s| u8::from_str_radix(unsafe{::std::str::from_utf8_unchecked(s)}, 16).unwrap())
+        .collect::<Vec<u8>>()
+}
+
 /// Returns a String of ASCII characters representing the Base64
 /// encoding of the input array.
 ///
@@ -15,10 +23,9 @@
 ///
 /// This function does no pre-processing on input arrays
 // trait b64ops {
-//     fn base64_encode<T: ?Sized + AsRef<[u8]>>(input: &T);
+//     fn bin_to_base64<T: ?Sized + AsRef<[u8]>>(input: &T);
 // }
-
-pub fn base64_encode<T: AsRef<[u8]> + ?Sized>(input: &T) -> String {
+pub fn bin_to_base64<T: AsRef<[u8]> + ?Sized>(input: &T) -> String {
     const LOWER_SIX_BITS: u32 = 0b11_1111;
     let base64_alphabet = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -58,6 +65,9 @@ pub fn base64_encode<T: AsRef<[u8]> + ?Sized>(input: &T) -> String {
     output
 }
 
+pub fn hexstr_to_base64(input: &str) -> String {
+    bin_to_base64(&hexstr_to_bytes(input))
+}
 
 #[cfg(test)]
 mod tests {
@@ -65,20 +75,26 @@ mod tests {
 
     #[test]
     fn encode_test_1() {
-        assert_eq!(base64_encode("test"), "dGVzdA==");
+        assert_eq!(bin_to_base64("test"), "dGVzdA==");
     }
 
     // #[rustfmt_skip]
     #[test]
     fn encode_test_2() {
         assert_eq!(
-            base64_encode(&vec![ 0x49, 0x27, 0x6d, 0x20, 0x6b, 0x69, 0x6c, 0x6c,
-                                 0x69, 0x6e, 0x67, 0x20, 0x79, 0x6f, 0x75, 0x72,
-                                 0x20, 0x62, 0x72, 0x61, 0x69, 0x6e, 0x20, 0x6c,
-                                 0x69, 0x6b, 0x65, 0x20, 0x61, 0x20, 0x70, 0x6f,
-                                 0x69, 0x73, 0x6f, 0x6e, 0x6f, 0x75, 0x73, 0x20,
-                                 0x6d, 0x75, 0x73, 0x68, 0x72, 0x6f, 0x6f, 0x6d]),
+                bin_to_base64(&vec![0x49, 0x27, 0x6d, 0x20, 0x6b, 0x69, 0x6c, 0x6c,
+                                    0x69, 0x6e, 0x67, 0x20, 0x79, 0x6f, 0x75, 0x72,
+                                    0x20, 0x62, 0x72, 0x61, 0x69, 0x6e, 0x20, 0x6c,
+                                    0x69, 0x6b, 0x65, 0x20, 0x61, 0x20, 0x70, 0x6f,
+                                    0x69, 0x73, 0x6f, 0x6e, 0x6f, 0x75, 0x73, 0x20,
+                                    0x6d, 0x75, 0x73, 0x68, 0x72, 0x6f, 0x6f, 0x6d]),
             "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
         );
+    }
+
+    #[test]
+    fn encode_test_3() {
+        assert_eq!(hexstr_to_base64("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"),
+        "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t");
     }
 }
