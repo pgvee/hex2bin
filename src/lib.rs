@@ -1,6 +1,6 @@
 /// Only use this when the input string is guaranteed to be a string of hex. Otherwise,
 /// will panic.
-pub fn hexstr_to_bytes(input: &str) -> Vec<u8> {
+pub fn hexstr_to_u8s(input: &str) -> Vec<u8> {
         input.as_bytes().chunks(2)
         .map(|s| u8::from_str_radix(unsafe{::std::str::from_utf8_unchecked(s)}, 16).unwrap())
         .collect::<Vec<u8>>()
@@ -66,7 +66,7 @@ pub fn bin_to_base64<T: AsRef<[u8]> + ?Sized>(input: &T) -> String {
 }
 
 pub fn hexstr_to_base64(input: &str) -> String {
-    bin_to_base64(&hexstr_to_bytes(input))
+    bin_to_base64(&hexstr_to_u8s(input))
 }
 
 #[cfg(test)]
@@ -96,5 +96,10 @@ mod tests {
     fn encode_test_3() {
         assert_eq!(hexstr_to_base64("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"),
         "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t");
+    }
+
+    #[test]
+    fn encode_test_4() {
+        assert_eq!(bin_to_base64("⚙️🔋❤️"), "4pqZ77iP8J+Ui+KdpO+4jw==");
     }
 }
