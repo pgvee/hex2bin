@@ -7,7 +7,7 @@ authors = ["Peter Voorhees <peter@voorhe.es>"]
 
 
 [lib]
-name = "crypto_tools_lib"
+name = "crypto_pals"
 path = "src/lib.rs"
 
 [[bin]]

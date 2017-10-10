@@ -1,7 +1,7 @@
-extern crate crypto_tools_lib;
+extern crate crypto_pals;
 
 fn main() {
-    use crypto_tools_lib::{bin_to_base64, hexstr_to_base64};
+    use crypto_pals::ops::{bin_to_base64, hexstr_to_base64};
 
     println!("{}", bin_to_base64("Test"));
     println!("{}", bin_to_base64(&vec![ 0x49, 0x27, 0x6d, 0x20, 0x6b, 0x69, 0x6c, 0x6c,
